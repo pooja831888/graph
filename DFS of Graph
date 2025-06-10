@@ -1,0 +1,27 @@
+ public ArrayList<Integer> dfs(ArrayList<ArrayList<Integer>> adj) {
+        
+        int v = adj.size(); 
+        ArrayList<Integer> result = new ArrayList<>();
+        boolean[] visited = new boolean[v];
+
+        // In case of a disconnected graph
+        for (int i = 0; i < v; i++) {
+            if (!visited[i]) {
+                dfsHelper(i, adj, visited, result);
+            }
+        }
+
+        return result;
+    }
+
+    // Recursive DFS helper
+    private void dfsHelper(int node, ArrayList<ArrayList<Integer>> adj, boolean[] visited, ArrayList<Integer> result) {
+        visited[node] = true;
+        result.add(node);
+
+        for (int neighbour : adj.get(node)) {
+            if (!visited[neighbour]) {
+                dfsHelper(neighbour, adj, visited, result);
+            }
+        }
+    }
