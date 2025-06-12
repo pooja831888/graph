@@ -1,0 +1,50 @@
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Step 2: Create in-degree array
+        int[] inDegree = new int[numCourses];
+
+        // Step 3: Fill adjacency list & in-degree array
+        for (int[] pre : prerequisites) {
+            int course = pre[0];
+            int prerequisite = pre[1];
+
+            adj.get(prerequisite).add(course);  // prerequisite → course edge
+            inDegree[course]++;  // Increase in-degree of course
+        }
+
+        // Step 4: Find courses with no prerequisites (in-degree = 0)
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        // Step 5: Process courses in Topological Order
+        int index = 0;
+        int[] order = new int[numCourses];  // To store the valid order
+
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            order[index++] = current;  // Add course to order
+
+            for (int neighbor : adj.get(current)) {
+                inDegree[neighbor]--;
+
+                if (inDegree[neighbor] == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // Step 6: If we couldn't process all courses, return empty array
+        return index == numCourses ? order : new int[0];
+        
+    }
+}
