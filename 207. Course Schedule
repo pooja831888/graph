@@ -1,0 +1,50 @@
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Step 2: Create an in-degree array to count prerequisites for each course
+        int[] inDegree = new int[numCourses];
+
+        // Step 3: Build the adjacency list and fill in-degree array
+        for (int[] pre : prerequisites) {
+            int course = pre[0];
+            int prerequisite = pre[1];
+
+            adj.get(prerequisite).add(course);
+            inDegree[course]++;
+        }
+
+        // Step 4: Find courses with 0 prerequisites (in-degree = 0) and add them to queue
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        // Step 5: Process courses in topological order
+        int count = 0;
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            count++; // Increase count of processed courses
+
+            // Reduce the in-degree of dependent courses
+            for (int neighbor : adj.get(current)) {
+                inDegree[neighbor]--;
+
+                // If in-degree becomes 0, add it to queue
+                if (inDegree[neighbor] == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // Step 6: If we could process all courses, return true; otherwise, false
+        return count == numCourses;
+        
+    }
+}
