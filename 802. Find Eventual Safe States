@@ -1,0 +1,48 @@
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+
+        int n = graph.length;
+        
+        // Step 1: Reverse the graph
+        List<List<Integer>> revGraph = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            revGraph.add(new ArrayList<>());
+        }
+        
+        int[] inDegree = new int[n]; // Store in-degree for reversed graph
+        
+        for (int u = 0; u < n; u++) {
+            for (int v : graph[u]) {
+                revGraph.get(v).add(u); // Reverse the edge
+                inDegree[u]++;          // Increase in-degree
+            }
+        }
+        
+        // Step 2: Find terminal nodes (in-degree 0)
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+        
+        // Step 3: Process nodes using BFS
+        List<Integer> safeNodes = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            safeNodes.add(node);
+            
+            for (int neighbor : revGraph.get(node)) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+        
+        // Step 4: Return sorted safe nodes
+        Collections.sort(safeNodes);
+        return safeNodes;
+        
+    }
+}
