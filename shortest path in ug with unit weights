@@ -1,0 +1,37 @@
+public int[] shortestPathUG(int n, int[][] edges, int src) {
+    // Step 1: Create adjacency list
+    ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+    for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+
+    for (int[] edge : edges) {
+        adj.get(edge[0]).add(edge[1]);
+        adj.get(edge[1]).add(edge[0]); // undirected graph
+    }
+
+    // Step 2: Distance array initialized with INF (1e9)
+    int[] dist = new int[n];
+    Arrays.fill(dist, (int)1e9);
+    dist[src] = 0;
+
+    // Step 3: BFS queue
+    Queue<Integer> q = new LinkedList<>();
+    q.add(src);
+
+    // Step 4: Standard BFS
+    while (!q.isEmpty()) {
+        int node = q.poll();
+        for (int neighbor : adj.get(node)) {
+            if (dist[node] + 1 < dist[neighbor]) {
+                dist[neighbor] = dist[node] + 1;
+                q.add(neighbor);
+            }
+        }
+    }
+
+    // Step 5: Convert unreachable nodes to -1
+    for (int i = 0; i < n; i++) {
+        if (dist[i] == 1e9) dist[i] = -1;
+    }
+
+    return dist;
+}
